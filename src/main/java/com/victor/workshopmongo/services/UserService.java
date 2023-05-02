@@ -35,14 +35,14 @@ public class UserService {
 		User user = findById(id);
 		repo.delete(user);
 	}
-	
+
 	public User update(User obj) {
-		Optional<User> optionalNewObj = repo.findById(obj.getId());
-		User newObj = optionalNewObj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado"));
-		updateData(newObj, obj);
-		return repo.save(newObj);
+		return repo.findById(obj.getId()).map(newObj -> {
+			updateData(newObj, obj);
+			return repo.save(newObj);
+		}).orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado"));
 	}
-	
+
 	public void updateData(User newObj, User obj) {
 		newObj.setName(obj.getName());
 		newObj.setEmail(obj.getEmail());
